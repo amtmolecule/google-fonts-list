@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchGoogleFonts } from "../../utils/fetchGoogleFonts";
 import { IGoogleFont } from "../../types/google-fonts.types";
+import { FontsList } from "../fonts-list/fonts-list";
 
 export const FontsProvider: React.FunctionComponent = () => {
   const [fonts, setFonts] = useState<IGoogleFont[]>([]);
@@ -11,5 +12,5 @@ export const FontsProvider: React.FunctionComponent = () => {
     });
   }, []);
 
-  return <div className="">{fonts.length}</div>;
+  return <FontsList fonts={fonts} />;
 };
