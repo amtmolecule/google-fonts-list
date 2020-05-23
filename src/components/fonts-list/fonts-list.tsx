@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import throttle from "lodash/throttle";
 import { IFontsListProps } from "./fonts-list.types";
 import "./fonts-list.styles.css";
-import { addFontToDocument } from "../../utils/addFontToDocument";
+import { addFontsToDocument } from "../../utils/addFontToDocument";
 
 const portionSize = 20;
 
@@ -19,12 +19,12 @@ export const FontsList: React.FunctionComponent<IFontsListProps> = (props) => {
   const [showCount, setShowCount] = useState(0);
 
   useEffect(() => {
-    addFontToDocument(fonts.map((font) => font.family).slice(0, portionSize));
+    addFontsToDocument(fonts.map((font) => font.family).slice(0, portionSize));
     setShowCount(portionSize);
   }, [fonts]);
 
   const showMore = () => {
-    addFontToDocument(
+    addFontsToDocument(
       fonts.map((font) => font.family).slice(showCount, showCount + portionSize)
     )
       .then(console.log)
