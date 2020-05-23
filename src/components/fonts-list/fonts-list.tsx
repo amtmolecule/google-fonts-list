@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import throttle from "lodash/throttle";
 import { IFontsListProps } from "./fonts-list.types";
 import "./fonts-list.styles.css";
 import { addFontToDocument } from "../../utils/addFontToDocument";
 
-interface IHandleScrollParams {
-  scrollHeight: number;
-  scrollTop: number;
-  clientHeight: number;
-}
-
 const portionSize = 20;
+
+const checkIfNearBottom = (element: Element) => {
+  const { scrollHeight, scrollTop, clientHeight } = element;
+  const maxScroll = scrollHeight - clientHeight;
+  const scrollBottom = maxScroll - scrollTop;
+  return scrollBottom < 20;
+};
 
 export const FontsList: React.FunctionComponent<IFontsListProps> = (props) => {
   const { fonts, onFontSelect = console.log } = props;
@@ -26,29 +27,22 @@ export const FontsList: React.FunctionComponent<IFontsListProps> = (props) => {
     addFontToDocument(
       fonts.map((font) => font.family).slice(showCount, showCount + portionSize)
     )
-    .then(console.log)
-    .catch(console.log);
+      .then(console.log)
+      .catch(console.log);
     setShowCount(showCount + portionSize);
   };
 
-  const handleNearBottom = ({
-    scrollHeight,
-    scrollTop,
-    clientHeight,
-  }: IHandleScrollParams) => {
-    const maxScroll = scrollHeight - clientHeight;
-    const scrollBottom = maxScroll - scrollTop;
-    if (scrollBottom < 20) {
-      showMore();
-    }
-  };
+  const throttledHandleListScroll = useCallback(
+    throttle((element: Element, showMore: Function) => {
+      if (checkIfNearBottom(element)) {
+        showMore();
+      }
+    }, 1000),
+    []
+  );
 
-  const throttledHandleNearBottom = throttle(handleNearBottom, 1000);
-
-  const handleListScroll: React.UIEventHandler = ({
-    currentTarget: { scrollHeight, scrollTop, clientHeight },
-  }) => {
-    throttledHandleNearBottom({ scrollHeight, scrollTop, clientHeight });
+  const handleListScroll: React.UIEventHandler = ({ currentTarget }) => {
+    throttledHandleListScroll(currentTarget, showMore);
   };
 
   return (
