@@ -37,7 +37,7 @@ export const FontsList: React.FunctionComponent<IFontsListProps> = (props) => {
       if (checkIfNearBottom(element)) {
         showMore();
       }
-    }, 1000),
+    }, 100),
     []
   );
 
@@ -48,13 +48,14 @@ export const FontsList: React.FunctionComponent<IFontsListProps> = (props) => {
   return (
     <ul onScroll={handleListScroll} className="fonts-list">
       {fonts.slice(0, showCount).map((font) => (
-        // TODO: a11y
-        <li
-          style={{ fontFamily: font.family }}
-          key={font.family}
-          onClick={() => onFontSelect}
-        >
-          {font.family}
+        <li key={font.family}>
+          <button
+            style={{ fontFamily: font.family }}
+            className="fonts-list__font-btn"
+            onClick={() => onFontSelect(font.family)}
+          >
+            {font.family}
+          </button>
         </li>
       ))}
     </ul>
